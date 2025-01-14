@@ -5,7 +5,7 @@ type Employee struct {
 	Username string
 	Name     string
 	Position Position
-	UserID   int
+	UserID   int64
 }
 
 // Position - должность (позиция) работника.

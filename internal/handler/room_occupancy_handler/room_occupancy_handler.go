@@ -1,6 +1,9 @@
 package room_occupancy_handler
 
-import tele "gopkg.in/telebot.v4"
+import (
+	tele "gopkg.in/telebot.v4"
+	"hotel-management/internal/domain"
+)
 
 type AddRoomOccupancyUseCase interface {
 	AddRoomOccupancy(c tele.Context) error
@@ -27,7 +30,7 @@ func NewRoomOccupancyHandler(bot *tele.Bot, addRoomOccupancyUseCase AddRoomOccup
 }
 
 func (h *RoomOccupancyHandler) RegisterHandlers() {
-	h.bot.Handle("/add_occupancy", h.addRoomOccupancyUseCase.AddRoomOccupancy)
-	h.bot.Handle("/occupancies", h.listRoomOccupancyUseCase.ListRoomOccupancy)
-	h.bot.Handle("/end_occupancy", h.endRoomOccupancyUseCase.EndRoomOccupancy)
+	h.bot.Handle(domain.CommandAddRoomOccupancy, h.addRoomOccupancyUseCase.AddRoomOccupancy)
+	h.bot.Handle(domain.CommandListRoomOccupancy, h.listRoomOccupancyUseCase.ListRoomOccupancy)
+	h.bot.Handle(domain.CommandEndRoomOccupancy, h.endRoomOccupancyUseCase.EndRoomOccupancy)
 }

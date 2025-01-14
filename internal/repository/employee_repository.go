@@ -83,6 +83,12 @@ func (r *EmployeeRepository) ListEmployees(ctx context.Context) ([]domain.Employ
 			Username: modelEmployee.Username,
 			Name:     lo.FromPtr(modelEmployee.Name),
 			Position: domain.Position(modelEmployee.Position),
+			UserID: func(userID *int32) int64 {
+				if userID == nil {
+					return 0
+				}
+				return int64(*userID)
+			}(modelEmployee.UserID),
 		}
 	})
 

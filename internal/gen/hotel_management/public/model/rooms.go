@@ -8,9 +8,10 @@
 package model
 
 type Rooms struct {
-	ID      int32 `sql:"primary_key"`
-	Number  string
-	Type    int32
-	Price   int32
-	Cleaned bool
+	ID          int32 `sql:"primary_key"`
+	Number      string
+	Type        int32
+	Price       int32
+	Cleaned     bool
+	Description *string
 }

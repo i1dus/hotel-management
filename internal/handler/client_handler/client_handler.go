@@ -1,6 +1,9 @@
 package client_handler
 
-import tele "gopkg.in/telebot.v4"
+import (
+	tele "gopkg.in/telebot.v4"
+	"hotel-management/internal/domain"
+)
 
 type AddClientUseCase interface {
 	AddClient(c tele.Context) error
@@ -17,5 +20,5 @@ func NewClientHandler(bot *tele.Bot, addClientUseCase AddClientUseCase) *ClientH
 }
 
 func (h *ClientHandler) RegisterHandlers() {
-	h.bot.Handle("/add_client", h.addClientUseCase.AddClient)
+	h.bot.Handle(domain.CommandAddClient, h.addClientUseCase.AddClient)
 }

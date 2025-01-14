@@ -1,11 +1,12 @@
 package domain
 
 type Room struct {
-	ID      int
-	Number  string
-	Type    RoomCategory
-	Price   int
-	Cleaned bool
+	ID          int
+	Number      string
+	Type        RoomCategory
+	Price       int
+	Cleaned     bool
+	Description string
 }
 
 // RoomCategory категория номера

@@ -23,7 +23,7 @@ func NewRemoveEmployeeUseCase(employeeRepo EmployeeRepository) *RemoveEmployeeUs
 func (uc *RemoveEmployeeUseCase) RemoveEmployee(c tele.Context) error {
 	args := c.Args()
 	if len(args) != 1 {
-		return c.Send("Должно быть 1 аргумента: TG-логин")
+		return c.Send("Должен быть 1 аргумент: TG-логин")
 	}
 
 	// ТГ-логин

@@ -17,11 +17,12 @@ type roomsTable struct {
 	postgres.Table
 
 	// Columns
-	ID      postgres.ColumnInteger
-	Number  postgres.ColumnString
-	Type    postgres.ColumnInteger
-	Price   postgres.ColumnInteger
-	Cleaned postgres.ColumnBool
+	ID          postgres.ColumnInteger
+	Number      postgres.ColumnString
+	Type        postgres.ColumnInteger
+	Price       postgres.ColumnInteger
+	Cleaned     postgres.ColumnBool
+	Description postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -62,24 +63,26 @@ func newRoomsTable(schemaName, tableName, alias string) *RoomsTable {
 
 func newRoomsTableImpl(schemaName, tableName, alias string) roomsTable {
 	var (
-		IDColumn       = postgres.IntegerColumn("id")
-		NumberColumn   = postgres.StringColumn("number")
-		TypeColumn     = postgres.IntegerColumn("type")
-		PriceColumn    = postgres.IntegerColumn("price")
-		CleanedColumn  = postgres.BoolColumn("cleaned")
-		allColumns     = postgres.ColumnList{IDColumn, NumberColumn, TypeColumn, PriceColumn, CleanedColumn}
-		mutableColumns = postgres.ColumnList{NumberColumn, TypeColumn, PriceColumn, CleanedColumn}
+		IDColumn          = postgres.IntegerColumn("id")
+		NumberColumn      = postgres.StringColumn("number")
+		TypeColumn        = postgres.IntegerColumn("type")
+		PriceColumn       = postgres.IntegerColumn("price")
+		CleanedColumn     = postgres.BoolColumn("cleaned")
+		DescriptionColumn = postgres.StringColumn("description")
+		allColumns        = postgres.ColumnList{IDColumn, NumberColumn, TypeColumn, PriceColumn, CleanedColumn, DescriptionColumn}
+		mutableColumns    = postgres.ColumnList{NumberColumn, TypeColumn, PriceColumn, CleanedColumn, DescriptionColumn}
 	)
 
 	return roomsTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:      IDColumn,
-		Number:  NumberColumn,
-		Type:    TypeColumn,
-		Price:   PriceColumn,
-		Cleaned: CleanedColumn,
+		ID:          IDColumn,
+		Number:      NumberColumn,
+		Type:        TypeColumn,
+		Price:       PriceColumn,
+		Cleaned:     CleanedColumn,
+		Description: DescriptionColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

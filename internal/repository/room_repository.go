@@ -42,7 +42,9 @@ func (r *RoomRepository) AddRoom(ctx context.Context, room domain.Room) error {
 func (r *RoomRepository) ListRooms(ctx context.Context) ([]domain.Room, error) {
 	stmt, args := postgres.SELECT(
 		table.Rooms.AllColumns).
-		FROM(table.Rooms).Sql()
+		FROM(table.Rooms).
+		ORDER_BY(table.Rooms.Number).
+		Sql()
 
 	var modelRooms []model.Rooms
 
@@ -57,7 +59,7 @@ func (r *RoomRepository) ListRooms(ctx context.Context) ([]domain.Room, error) {
 
 	for rows.Next() {
 		var room model.Rooms
-		if err := rows.Scan(&room.ID, &room.Number, &room.Type, &room.Price, &room.Cleaned); err != nil {
+		if err := rows.Scan(&room.ID, &room.Number, &room.Type, &room.Price, &room.Cleaned, &room.Description); err != nil {
 			return nil, err
 		}
 		modelRooms = append(modelRooms, room)
@@ -65,10 +67,11 @@ func (r *RoomRepository) ListRooms(ctx context.Context) ([]domain.Room, error) {
 
 	rooms := lo.Map(modelRooms, func(modelRoom model.Rooms, index int) domain.Room {
 		return domain.Room{
-			Number:  modelRoom.Number,
-			Type:    domain.RoomCategory(modelRoom.Type),
-			Price:   int(modelRoom.Price),
-			Cleaned: modelRoom.Cleaned,
+			Number:      modelRoom.Number,
+			Type:        domain.RoomCategory(modelRoom.Type),
+			Price:       int(modelRoom.Price),
+			Cleaned:     modelRoom.Cleaned,
+			Description: lo.FromPtr(modelRoom.Description),
 		}
 	})
 
@@ -112,6 +115,22 @@ func (r *RoomRepository) ChangeRoomCleaned(ctx context.Context, number string, c
 	stmt, args := table.Rooms.
 		UPDATE(table.Rooms.Cleaned).
 		SET(postgres.Bool(cleaned)).
+		WHERE(table.Rooms.Number.EQ(postgres.String(number))).Sql()
+
+	res, err := r.conn.Exec(ctx, stmt, args...)
+	if err != nil {
+		return err
+	}
+	if res.RowsAffected() == 0 {
+		return ErrRoomNotFound
+	}
+	return nil
+}
+
+func (r *RoomRepository) ChangeRoomDescription(ctx context.Context, number string, description string) error {
+	stmt, args := table.Rooms.
+		UPDATE(table.Rooms.Description).
+		SET(postgres.String(description)).
 		WHERE(table.Rooms.Number.EQ(postgres.String(number))).Sql()
 
 	res, err := r.conn.Exec(ctx, stmt, args...)

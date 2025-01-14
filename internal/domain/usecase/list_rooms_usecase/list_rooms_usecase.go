@@ -3,6 +3,7 @@ package list_rooms_usecase
 import (
 	"context"
 	"fmt"
+	"github.com/samber/lo"
 	tele "gopkg.in/telebot.v4"
 	"hotel-management/internal/domain"
 	"hotel-management/internal/domain/usecase"
@@ -28,7 +29,7 @@ func (uc *ListRoomsUseCase) ListRooms(c tele.Context) error {
 	}
 
 	message := strings.Builder{}
-	message.WriteString("Номера:")
+	message.WriteString("🛏️ Номера:")
 
 	if len(rooms) == 0 {
 		message.WriteString("\nНомера не найдены")
@@ -36,14 +37,16 @@ func (uc *ListRoomsUseCase) ListRooms(c tele.Context) error {
 	}
 
 	for _, room := range rooms {
-		message.WriteString(fmt.Sprintf("\nНомер: '%s', Категория: '%s', Цена за сутки: %d₽",
-			room.Number, room.Type.GetRoomTypeName(), room.Price))
+		message.WriteString(fmt.Sprintf("\n\nНомер '%s':\n\t\tКатегория: '%s'\n\t\tЦена за сутки: %d₽\n\t\tУборка: %s",
+			room.Number,
+			room.Type.GetRoomTypeName(),
+			room.Price,
+			lo.If(!room.Cleaned, "Нужна").Else("Не нужна"),
+		))
 
-		var needToCleanMessage = " Уборка: Нужна"
-		if room.Cleaned {
-			needToCleanMessage = " Уборка: Не нужна"
+		if room.Description != "" {
+			message.WriteString(fmt.Sprintf("\n\t\tКомментарий: '%s'", room.Description))
 		}
-		message.WriteString(needToCleanMessage)
 	}
 	return c.Send(message.String())
 }
